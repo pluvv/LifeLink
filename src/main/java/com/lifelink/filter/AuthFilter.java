@@ -6,7 +6,7 @@ import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.*;
 
-@WebFilter(urlPatterns={"/dashboard","/admin","/inventory"})
+@WebFilter(urlPatterns={"/dashboard","/admin","/inventory","/appointments"})
 public class AuthFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
@@ -21,6 +21,7 @@ public class AuthFilter implements Filter {
         String path = req.getServletPath();
         if ("/admin".equals(path) && !"ADMIN".equals(user.getRole())) { res.sendError(403); return; }
         if ("/inventory".equals(path) && !"BLOOD_BANK".equals(user.getRole())) { res.sendError(403); return; }
+        if ("/appointments".equals(path) && !"DONOR".equals(user.getRole())) { res.sendError(403); return; }
         chain.doFilter(request, response);
     }
 }
