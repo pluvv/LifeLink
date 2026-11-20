@@ -85,7 +85,7 @@ The deployable file is created at:
 target/LifeLink.war
 ```
 
-GitHub Actions also runs mvn clean package on pushes and pull requests to main.
+GitHub Actions also runs mvn clean package on pushes and pull requests to main, then publishes target/LifeLink.war as a downloadable artifact named LifeLink-war (retained for 14 days).
 
 ## Run with Tomcat 9
 
