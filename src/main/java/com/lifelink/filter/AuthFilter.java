@@ -3,12 +3,16 @@ import java.io.IOException;
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.*;
-@WebFilter("/dashboard")
+@WebFilter(urlPatterns={"/dashboard","/admin"})
 public class AuthFilter implements Filter {
  public void doFilter(ServletRequest request,ServletResponse response,FilterChain chain)throws IOException,ServletException{
    HttpServletRequest req=(HttpServletRequest)request;HttpServletResponse res=(HttpServletResponse)response;
    HttpSession s=req.getSession(false);
    if(s==null||s.getAttribute("user")==null){res.sendRedirect(req.getContextPath()+"/login.jsp");return;}
+   if("/admin".equals(req.getServletPath())){
+     Object user=s.getAttribute("user");
+     if(!(user instanceof com.lifelink.model.User)||!"ADMIN".equals(((com.lifelink.model.User)user).getRole())){res.sendError(403);return;}
+   }
    chain.doFilter(request,response);
  }
 }
