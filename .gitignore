@@ -1,0 +1,19 @@
+# Java / Maven
+target/
+*.class
+*.jar
+*.war
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# Local secrets and database settings
+src/main/resources/db.properties
+.env
+.env.*
+
+# OS files
+.DS_Store
+Thumbs.db
