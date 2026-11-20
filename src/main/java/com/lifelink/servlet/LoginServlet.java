@@ -5,11 +5,11 @@ import com.lifelink.model.User;
 import com.lifelink.util.Password;
 import java.io.IOException;
 import java.sql.SQLException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
@@ -24,8 +24,9 @@ public class LoginServlet extends HttpServlet {
             return;
         }
         try {
-            User user = users.findByEmail(email.trim().toLowerCase());
-            String hash = users.getPasswordHash(email.trim().toLowerCase());
+            String normalizedEmail = email.trim().toLowerCase();
+            User user = users.findByEmail(normalizedEmail);
+            String hash = users.getPasswordHash(normalizedEmail);
             if (user == null || !Password.verify(password, hash)) {
                 response.sendRedirect("login.jsp?error=invalid");
                 return;
