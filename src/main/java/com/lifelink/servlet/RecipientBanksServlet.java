@@ -19,7 +19,7 @@ public class RecipientBanksServlet extends HttpServlet {
         if(!"RECIPIENT".equals(user.getRole())){res.sendError(403);return;}
         String sql="SELECT b.user_id,b.bank_name,b.address,b.city,b.phone,(SELECT GROUP_CONCAT(CONCAT(i.blood_group, ' = ', i.units, ' units') ORDER BY i.blood_group SEPARATOR ' · ') FROM blood_inventory i WHERE i.bank_user_id=b.user_id) AS stock_summary " +
                    "FROM blood_banks b JOIN users u ON u.id=b.user_id " +
-                   "WHERE u.status='APPROVED' ORDER BY b.city,b.bank_name,i.blood_group";
+                   "WHERE u.status='APPROVED' ORDER BY b.city,b.bank_name";
         try(Connection c=DB.getConnection();PreparedStatement p=c.prepareStatement(sql);ResultSet r=p.executeQuery()){
             List<Map<String,Object>> banks=new ArrayList<>();
             while(r.next()){
