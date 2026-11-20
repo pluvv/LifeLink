@@ -35,6 +35,7 @@ public class LoginServlet extends HttpServlet {
                 response.sendRedirect("login.jsp?error=" + user.getStatus().toLowerCase());
                 return;
             }
+            request.changeSessionId();
             HttpSession session = request.getSession(true);
             session.setAttribute("user", user);
             session.setMaxInactiveInterval(30 * 60);
