@@ -131,6 +131,12 @@ The SQL schema uses foreign keys, enum-backed statuses, non-negative stock check
 - Database transactions protect donation completion, request fulfilment and transfer acceptance against duplicate stock changes.
 - Inventory is demonstration data. There is no identity verification, medical eligibility screening, blood testing, clinical compatibility validation, SMS/email notification, or production hosting configuration.
 
+## Project documentation
+
+- [Project report](docs/PROJECT_REPORT.md)
+- [Manual test plan](docs/TEST_PLAN.md)
+- [Viva preparation](docs/VIVA_PREPARATION.md)
+
 ## Repository layout
 
 ```
