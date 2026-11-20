@@ -20,3 +20,10 @@ jobs:
           cache: maven
       - name: Build WAR
         run: mvn --batch-mode --no-transfer-progress clean package
+      - name: Upload deployable WAR
+        uses: actions/upload-artifact@v4
+        with:
+          name: LifeLink-war
+          path: target/LifeLink.war
+          if-no-files-found: error
+          retention-days: 14
