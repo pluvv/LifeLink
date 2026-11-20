@@ -11,7 +11,7 @@ List<Map<String,Object>> appointments=(List<Map<String,Object>>)request.getAttri
 <%if("invalid".equals(request.getParameter("error"))){%><div class="notice">Check the bank, date and notes. Choose a date at least 30 minutes from now.</div><%}%>
 <%if("bank".equals(request.getParameter("error"))){%><div class="notice">That blood bank is not available for booking.</div><%}%>
 <%if("save".equals(request.getParameter("error"))){%><div class="notice">We couldn't save the appointment. Please try again.</div><%}%>
-<form method="post" action="appointments">
+<form method="post" action="appointments"><input type="hidden" name="csrfToken" value="<%=session.getAttribute("csrfToken")%>"/>
 <label for="bankId">Approved blood bank</label><select id="bankId" name="bankId" required><option value="">Choose a blood bank</option><%for(Map<String,Object>b:banks){%><option value="<%=b.get("id")%>"><%=b.get("name")%> — <%=b.get("city")%></option><%}%></select>
 <label for="scheduledAt">Preferred date and time</label><input id="scheduledAt" name="scheduledAt" type="datetime-local" required>
 <label for="notes">Notes (optional)</label><input id="notes" name="notes" maxlength="500" placeholder="Anything the blood bank should know">
