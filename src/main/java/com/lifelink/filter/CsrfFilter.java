@@ -8,7 +8,7 @@ import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.*;
 
-@WebFilter(urlPatterns={"/login","/login.jsp","/register","/register.jsp","/setup-admin","/logout","/admin","/inventory","/appointments","/bank/*","/recipient/*"})
+@WebFilter(urlPatterns={"/login","/login.jsp","/register","/register.jsp","/setup-admin.jsp","/setup-admin","/logout","/admin","/inventory","/appointments","/bank/*","/recipient/*"})
 public class CsrfFilter implements Filter {
     private static final SecureRandom RANDOM=new SecureRandom();
     @Override public void doFilter(ServletRequest request,ServletResponse response,FilterChain chain)throws IOException,ServletException{
