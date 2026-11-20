@@ -10,7 +10,7 @@ int[] units=(int[])request.getAttribute("inventoryUnits");
 <%if("1".equals(request.getParameter("saved"))){%><div class="notice">Inventory saved successfully.</div><%}%>
 <%if("invalid".equals(request.getParameter("error"))){%><div class="notice">Enter a whole number from 0 to 99,999 for every group.</div><%}%>
 <%if("save".equals(request.getParameter("error"))){%><div class="notice">We couldn't save the inventory. Please try again.</div><%}%>
-<form method="post" action="inventory">
+<form method="post" action="inventory"><input type="hidden" name="csrfToken" value="<%=session.getAttribute("csrfToken")%>"/>
 <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px">
 <%for(int i=0;i<groups.length;i++){%><div><label for="units_<%=i%>"><%=groups[i]%> blood group</label><input id="units_<%=i%>" name="units_<%=i%>" type="number" min="0" max="99999" step="1" value="<%=units[i]%>" required></div><%}%>
 </div>
