@@ -17,15 +17,15 @@ public class RecipientBanksServlet extends HttpServlet {
     @Override protected void doGet(HttpServletRequest req,HttpServletResponse res)throws ServletException,IOException{
         User user=(User)req.getSession(false).getAttribute("user");
         if(!"RECIPIENT".equals(user.getRole())){res.sendError(403);return;}
-        String sql="SELECT b.user_id,b.bank_name,b.address,b.city,b.phone,i.blood_group,i.units " +
-                   "FROM blood_banks b JOIN users u ON u.id=b.user_id LEFT JOIN blood_inventory i ON i.bank_user_id=b.user_id " +
+        String sql="SELECT b.user_id,b.bank_name,b.address,b.city,b.phone,(SELECT GROUP_CONCAT(CONCAT(i.blood_group, ' = ', i.units, ' units') ORDER BY i.blood_group SEPARATOR ' · ') FROM blood_inventory i WHERE i.bank_user_id=b.user_id) AS stock_summary " +
+                   "FROM blood_banks b JOIN users u ON u.id=b.user_id " +
                    "WHERE u.status='APPROVED' ORDER BY b.city,b.bank_name,i.blood_group";
         try(Connection c=DB.getConnection();PreparedStatement p=c.prepareStatement(sql);ResultSet r=p.executeQuery()){
             List<Map<String,Object>> banks=new ArrayList<>();
             while(r.next()){
                 Map<String,Object> m=new HashMap<>();m.put("id",r.getLong("user_id"));m.put("name",r.getString("bank_name"));
                 m.put("address",r.getString("address"));m.put("city",r.getString("city"));m.put("phone",r.getString("phone"));
-                m.put("group",r.getString("blood_group"));m.put("units",r.getObject("units"));banks.add(m);
+                m.put("stockSummary",r.getString("stock_summary"));banks.add(m);
             }
             req.setAttribute("banks",banks);
         }catch(SQLException e){getServletContext().log("Could not load approved blood banks",e);res.sendError(500);return;}
