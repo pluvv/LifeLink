@@ -3,6 +3,6 @@
 <!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Dashboard · LifeLink</title><link rel="stylesheet" href="../assets/css/style.css"></head><body><nav class="nav"><a class="brand" href="../../index.jsp">Life<span>Link</span></a><a class="primary small" href="../../logout">Sign out</a></nav><main class="auth"><section class="auth-card"><p class="eyebrow">ACCOUNT WORKSPACE</p><h1>Welcome, <%=u.getFullName()%></h1><p class="muted">Your account is signed in. Role: <strong><%=u.getRole()%></strong></p><div class="notice">Your account status is <strong><%=u.getStatus()%></strong>.</div>
 <%if("ADMIN".equals(u.getRole())){%><a class="primary full" href="../../admin">Open admin approvals</a><%}%>
 <%if("BLOOD_BANK".equals(u.getRole())){%><a class="primary full" href="../../inventory">Manage blood inventory</a><%}%>
-<%if("DONOR".equals(u.getRole())){%><p class="muted">Donor appointments and donation history are the next modules being added.</p><%}%>
+<%if("DONOR".equals(u.getRole())){%><a class="primary full" href="../../appointments">Book a donation appointment</a><%}%>
 <%if("RECIPIENT".equals(u.getRole())){%><p class="muted">Blood bank search and blood requests are the next modules being added.</p><%}%>
 </section></main></body></html>
