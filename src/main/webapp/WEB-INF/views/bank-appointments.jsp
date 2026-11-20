@@ -15,7 +15,7 @@ List<Map<String,Object>> appointments=(List<Map<String,Object>>)request.getAttri
 <p class="muted"><c:out value="${a.email}"/> · Blood group <strong><c:out value="${a.bloodGroup}"/></strong></p>
 <p><strong>Requested:</strong> <c:out value="${a.when}"/></p>
 <c:if test="${not empty a.notes}"><p class="muted"><c:out value="${a.notes}"/></p></c:if>
-<c:if test="${a.status eq 'PENDING' or a.status eq 'APPROVED'}"><form method="post" action="<%=request.getContextPath()%><input type="hidden" name="csrfToken" value="<%=session.getAttribute("csrfToken")%>"/>/bank/appointments" style="display:flex;gap:8px;flex-wrap:wrap">
+<c:if test="${a.status eq 'PENDING' or a.status eq 'APPROVED'}"><form method="post" action="<%=request.getContextPath()%>/bank/appointments" style="display:flex;gap:8px;flex-wrap:wrap">
 <input type="hidden" name="appointmentId" value="<c:out value='${a.id}'/>"/>
 <c:if test="${a.status eq 'PENDING'}"><button class="primary" name="action" value="approve" type="submit">Approve</button><button class="secondary" name="action" value="reject" type="submit">Reject</button></c:if>
 <c:if test="${a.status eq 'APPROVED'}"><button class="primary" name="action" value="complete" type="submit">Mark donation completed</button></c:if>
