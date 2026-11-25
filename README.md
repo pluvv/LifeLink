@@ -1,149 +1,152 @@
 # LifeLink — Blood Bank Management System
 
-LifeLink is a Java web application for a university project. It demonstrates workflows between donors, recipients, blood banks and an administrator.
+LifeLink is a Java web application demonstrating workflows between donors, recipients, blood banks and an administrator.
 
-> **Important:** LifeLink is an educational demonstration, not a real blood service. Do not use it for medical decisions or real-world blood allocation.
+> **Educational project only.** LifeLink is not a real blood service. Do not use it for medical decisions, real patient data, or real-world blood allocation.
 
-## Technology
+## Technology stack
 
-- Java 17 source compatibility
+- Java 17+
 - Maven 3.9+
-- Java Servlets / JSP (javax.servlet)
-- Apache Tomcat 9
-- MySQL 8
-- JDBC, JSTL and BCrypt
-- Responsive custom CSS
-- GitHub Actions Maven build
+- Java Servlets / JSP using the `javax.servlet` API
+- Apache Tomcat 9 (Tomcat 10/11 are not compatible without migrating to `jakarta.servlet`)
+- MySQL 8 and JDBC
+- JSTL and BCrypt
+- GitHub Actions for automated Maven builds
 
-## Implemented modules
+## Features
 
-### Accounts and administration
 - Donor, recipient and blood-bank registration
-- Password hashing with BCrypt
-- Administrator-only one-time bootstrap
-- Admin approval/rejection of registrations
-- Role-protected workspaces and session login/logout
-- CSRF protection on form submissions
+- BCrypt password hashing and role-based access
+- One-time first-administrator setup and admin approval of registrations
+- Donor appointment booking and blood-bank processing
+- Blood inventory management for all eight blood groups
+- Recipient blood requests and fulfilment
+- Inter-bank blood stock transfer workflow
+- CSRF protection and database transactions for stock-changing operations
 
-### Donors
-- Book appointments at approved blood banks
-- View appointment history and status
-- Blood-bank approval/rejection of appointment requests
-- Completing an approved donation adds one unit to the donor's blood group inventory in the same database transaction
+## Quick start: fork, clone and run
 
-### Recipients
-- Browse approved blood banks and their recorded stock
-- Submit blood requests for a selected blood group and number of units
-- Track request status
-- Bank approval/rejection and fulfilment workflow
-- Fulfilment deducts stock only when sufficient inventory exists
+### 1. Get the source code
 
-### Blood banks
-- Maintain the eight blood-group inventory values
-- Review and process donation appointments
-- Review recipient blood requests
-- Request inter-bank stock transfers
-- Accepting a transfer atomically deducts from the sending bank and adds to the receiving bank
+You can fork this repository on GitHub, or clone it directly:
 
-## Prerequisites
+```bash
+git clone https://github.com/pluvv/LifeLink.git
+cd LifeLink
+```
 
-Install these on Windows:
+If you are developing from your own fork, clone your fork's URL instead. You can also use GitHub's **Code → Download ZIP** option, then extract the project.
 
-1. **JDK 17 or newer** (the project targets Java 17).
-2. **Maven 3.9 or newer**.
-3. **MySQL Server 8**. MySQL Workbench is useful for running the SQL scripts.
-4. **Apache Tomcat 9**. Do not use Tomcat 10/11 for this build because it uses the javax.servlet API.
+### 2. Install prerequisites
 
-## Database setup
+Install:
 
-1. Open MySQL Workbench and connect to your local MySQL server.
-2. Open database/schema.sql and execute the complete script. It creates the lifelink database and all required tables.
-3. Copy src/main/resources/db.properties.example to src/main/resources/db.properties.
-4. Edit db.properties with your own local MySQL username and password. Example:
+1. JDK 17 or newer
+2. Maven 3.9 or newer
+3. MySQL Server 8 (MySQL Workbench is optional but helpful)
+4. Apache Tomcat 9
 
-   ```properties
-   db.url=jdbc:mysql://localhost:3306/lifelink?useSSL=false&serverTimezone=Asia/Kolkata
-   db.username=root
-   db.password=YOUR_LOCAL_MYSQL_PASSWORD
-   ```
+Check that Java and Maven are available:
 
-   Never commit db.properties. It is ignored by Git.
+```bash
+java -version
+mvn -version
+```
 
-There are no default demo credentials. Create the first administrator using the one-time setup page after deploying the app.
+### 3. Create the database
 
-## Build the application
+1. Start MySQL.
+2. Open MySQL Workbench (or another MySQL client).
+3. Open `database/schema.sql` and execute the entire script. It creates the `lifelink` database and all application tables.
+4. Optionally run `database/seed.sql`. It contains notes only; it does not create users or insert real personal data.
 
-From the repository folder:
+### 4. Configure your local database connection
 
+Copy the example configuration:
+
+**Windows PowerShell**
 ```powershell
+Copy-Item src/main/resources/db.properties.example src/main/resources/db.properties
+```
+
+**macOS / Linux**
+```bash
+cp src/main/resources/db.properties.example src/main/resources/db.properties
+```
+
+Edit `src/main/resources/db.properties` and enter your own MySQL credentials:
+
+```properties
+db.url=jdbc:mysql://localhost:3306/lifelink?useSSL=false&serverTimezone=Asia/Kolkata
+db.username=YOUR_MYSQL_USERNAME
+db.password=YOUR_LOCAL_MYSQL_PASSWORD
+```
+
+**Never commit or share `db.properties`, database passwords, production credentials, or real user data.** The local file is excluded by `.gitignore`. Keep the example file in the repository and update it only with non-secret defaults.
+
+### 5. Build the application
+
+Run this from the project root:
+
+```bash
 mvn clean package
 ```
 
-The deployable file is created at:
+Maven creates:
 
 ```
 target/LifeLink.war
 ```
 
-GitHub Actions also runs mvn clean package on pushes and pull requests to main, then publishes target/LifeLink.war as a downloadable artifact named LifeLink-war (retained for 14 days).
+### 6. Deploy to Tomcat 9
 
-## Run with Tomcat 9
+1. Copy `target/LifeLink.war` into Tomcat's `webapps` directory.
+2. Start Tomcat.
+3. Open [http://localhost:8080/LifeLink/](http://localhost:8080/LifeLink/).
+4. Open [http://localhost:8080/LifeLink/setup-admin](http://localhost:8080/LifeLink/setup-admin) and create the first administrator. This one-time setup endpoint is unavailable once an administrator exists.
+5. Register donor, recipient and blood-bank accounts, then approve them from the administrator account.
 
-1. Build the WAR using the command above.
-2. Copy target/LifeLink.war into Tomcat's webapps folder.
-3. Start Tomcat.
-4. Open http://localhost:8080/LifeLink/.
-5. Open http://localhost:8080/LifeLink/setup-admin and create the first administrator. This page becomes unavailable after an admin exists.
-6. Sign in as admin, then approve donor, recipient and blood-bank registrations.
-7. Sign in with each approved role to demonstrate the corresponding workflow.
+If Tomcat uses a different port, change `8080` in the URLs. If the application cannot connect to MySQL, verify that MySQL is running and that `db.properties` has the correct database name, username and password.
 
-If your Tomcat port is not 8080, replace the port in the URL with your configured port.
+## CI build
 
-## Suggested demonstration sequence
+GitHub Actions runs `mvn clean package` for pushes and pull requests targeting `main`. A successful run uploads `LifeLink.war` as the `LifeLink-war` workflow artifact for 14 days. See the **Actions** tab in GitHub to view build results and download the artifact.
 
-1. Create the administrator account.
-2. Register a blood bank and approve it from the admin workspace.
-3. Register a donor and recipient and approve both.
-4. Sign in as the bank and enter inventory for the eight blood groups.
-5. Sign in as donor, request an appointment, then return to the bank to approve and complete it.
-6. Sign in as recipient, browse the bank's stock and submit a request.
-7. Return to the bank, approve and fulfil the request, then show the stock deduction.
-8. Register and approve a second bank, create a transfer request, and accept it from the receiving bank.
+## Project structure
 
-## Database tables
+```
+database/                  MySQL schema and seed notes
+docs/                      Project report, test plan and viva notes
+src/main/java/             Servlets, filters, DAO, models and utilities
+src/main/resources/        Database configuration example
+src/main/webapp/           JSP pages, views, CSS and web configuration
+.github/workflows/         GitHub Actions Maven build
+pom.xml                    Maven WAR project definition
+```
 
-- users, donor_profiles, recipient_profiles, blood_banks
-- blood_inventory
-- donation_appointments
-- blood_requests
-- transfer_requests
+## Documentation
 
-The SQL schema uses foreign keys, enum-backed statuses, non-negative stock checks and unique inventory rows per bank/blood group.
-
-## Security and project limitations
-
-- Passwords are stored as BCrypt hashes.
-- SQL uses prepared statements.
-- Role checks are applied to protected routes.
-- Session IDs are rotated after successful login.
-- State-changing forms use session-bound CSRF tokens.
-- User-provided content is escaped in the main administrative and workflow views.
-- Database transactions protect donation completion, request fulfilment and transfer acceptance against duplicate stock changes.
-- Inventory is demonstration data. There is no identity verification, medical eligibility screening, blood testing, clinical compatibility validation, SMS/email notification, or production hosting configuration.
-
-## Project documentation
-
+- [Development and troubleshooting guide](docs/DEVELOPMENT.md)
+- [Contributing guide](CONTRIBUTING.md)
 - [Project report](docs/PROJECT_REPORT.md)
 - [Manual test plan](docs/TEST_PLAN.md)
 - [Viva preparation](docs/VIVA_PREPARATION.md)
 
-## Repository layout
+## Suggested demo flow
 
-```
-database/                  MySQL schema and seed notes
-src/main/java/             Servlets, filters, DAO and utilities
-src/main/resources/        Local database configuration template
-src/main/webapp/           JSP pages, views and CSS
-.github/workflows/         Maven CI build
-pom.xml                    Maven WAR project
-```
+1. Create the administrator.
+2. Register a blood bank and approve it.
+3. Register a donor and recipient and approve both.
+4. Sign in as the blood bank and enter sample inventory.
+5. Book and process a donor appointment.
+6. Submit and fulfil a recipient request.
+7. Register a second bank and demonstrate an inter-bank transfer.
+
+Use fictional demonstration data only.
+
+## Security and limitations
+
+The project includes BCrypt password hashing, prepared SQL statements, role checks, session ID rotation after login, CSRF protection, output escaping in key views, and transactions for inventory-changing workflows.
+
+This is a learning project, not production-ready software. It does not perform identity verification, medical eligibility screening, blood testing, clinical compatibility validation, or real-world notification and compliance workflows. Do not deploy it with real patient or donor information.
